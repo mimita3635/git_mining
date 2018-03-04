@@ -111,7 +111,7 @@ public class App {
                 }
 
             }
-            InputStream in = new FileInputStream("C:\\Users\\user\\Documents\\testJgit.txt");
+            InputStream in = new FileInputStream("C:\\Users\\user\\Documents\\testJgit22.txt");
             //Reader unbufferedReader = new InputStreamReader(in);
             //reader = new BufferedReader(new InputStreamReader(in));
             Parser P= new Parser(in);
