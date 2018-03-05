@@ -29,6 +29,9 @@ public class Param_Diff {
 		String csvRow = "";
 		for (String value : Arrays.asList(Commit_SHA, Old_sign, New_sign)) {
 			String processed = value;
+			
+			//Converting to STrings for handling commas
+			
 			if (value.contains("\"") || value.contains(",")) {
 				processed = "\"" + value.replaceAll("\"", "\"\"") + "\"";
 			}
