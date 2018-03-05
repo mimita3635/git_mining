@@ -80,11 +80,14 @@ public class App {
 
 		// then clone
 		System.out.println("Cloning from " + REMOTE_URL + " to " + localPath);
+		
 		try (Git result = Git.cloneRepository().setURI(REMOTE_URL).setDirectory(localPath).call()) {
 			// Note: the call() returns an opened repository already which needs to be
 			// closed to avoid file handle leaks!
-			System.out.println("Having repository: " + result.getRepository().getDirectory());
-			return result.getRepository().getDirectory();
+			File F=result.getRepository().getDirectory();
+			System.out.println("Having repository: " + F);
+			//result.close();
+			return F;
 		} catch (InvalidRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -94,6 +97,9 @@ public class App {
 		} catch (GitAPIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			//result.close();
 		}
 		return null;
 	}
@@ -120,7 +126,7 @@ public class App {
 		File F = cloneRepository();
 		try (Repository repository = openRepository(F)) {
 			FileOutputStream FS = new FileOutputStream("C:\\Users\\user\\Documents\\testJgit22.txt");
-
+			// git;
 			try (Git git = new Git(repository)) {
 
 				// compare older commit with the newer one, showing an addition
@@ -138,7 +144,12 @@ public class App {
 					Ra = Rb;
 
 				}
-
+				
+			}
+			finally {
+					
+				FS.close();
+				//repository.close();
 			}
 			InputStream in = new FileInputStream("C:\\Users\\user\\Documents\\testJgit22.txt");
 			// Reader unbufferedReader = new InputStreamReader(in);
@@ -161,6 +172,10 @@ public class App {
 			 * RevCommit commit = walk.next(); while( commit != null ) { // use commit
 			 * commit = walk.next(); } walk.close();
 			 */
+			
+			in.close();
+			//repository.close();
+			
 
 		}
 	}

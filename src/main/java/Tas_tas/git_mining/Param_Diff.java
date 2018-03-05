@@ -2,16 +2,28 @@ package Tas_tas.git_mining;
 
 import java.util.Arrays;
 
+/*
+ * Class to keep track of csv records
+ * 
+ * 
+ * */
+
 public class Param_Diff {
 	String Commit_SHA;
 	String Old_sign;
 	String New_sign;
 
-	Param_Diff(String A, String B, String C) {
-		Commit_SHA = A;
-		Old_sign = B;
-		New_sign = C;
+	Param_Diff(String Commit, String Old, String New) {
+		Commit_SHA = Commit;
+		Old_sign = Old;
+		New_sign = New;
 	}
+	
+	
+	/*
+	 * Converting the Param_Diffs to CSV rows
+	 * */
+	
 
 	public String toCsvRow() {
 		String csvRow = "";

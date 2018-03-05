@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -147,21 +148,46 @@ public class Parser {
 
                     String Prev_Token = Prev_Arr.get(2).substring(Prev_Arr.get(2).indexOf("(") + 1, Prev_Arr.get(2).indexOf(")"));
                     //System.out.println("Tok\t"+Tokens);
-                    String[] Tokenize = Prev_Token.split(",");
-                    for (String T : Tokenize) {
-                        T = T.trim();
+                    //String[] Tokenize_Array = Prev_Token.split(",");
+                    ArrayList<String> Tokenize= new ArrayList<>(Arrays.asList(Prev_Token.split(",")));
+                    for (int i=0;i<Tokenize.size();i++) {
+                    	String Temp=Tokenize.get(i);
+                    	Temp=Temp.trim();
+                    	if(Temp.equals("")) {
+                    		Tokenize.remove(i);
+                    		i--;
+                    		continue;
+                    	}
+                        Tokenize.set(i, Temp);
+                        
                         //System.out.println(T);
                     }
 
                     String Next_Token = Next_Arr.get(2).substring(Next_Arr.get(2).indexOf("(") + 1, Next_Arr.get(2).indexOf(")"));
                     //System.out.println("Tok\t"+Tokens);
-                    String[] Tokenize2 = Next_Token.split(",");
-                    for (String T : Tokenize2) {
-                        T = T.trim();
+                    String[] Tokenize2_Array = Next_Token.split(",");
+                    ArrayList<String> Tokenize2= new ArrayList<>(Arrays.asList(Next_Token.split(",")));
+                    for (int i=0;i<Tokenize2.size();i++) {
+                    	String Temp=Tokenize2.get(i);
+                    	Temp=Temp.trim();
+                    	if(Temp.equals("")) {
+                    		Tokenize2.remove(i);
+                    		i--;
+                    		continue;
+                    	}
+                        Tokenize2.set(i, Temp);
+                        
                         //System.out.println(T);
                     }
 
-                    if (Tokenize.length <= Tokenize2.length) {
+                    /*
+                    for (String T : Tokenize2) {
+                        T = T.trim();
+                        if(T.equals("")) Tokenize2.remove(Tokenize2.indexOf(T));
+                        //System.out.println(T);
+                    }
+                    */
+                    if (Tokenize.size() < Tokenize2.size()) {
                         //Parameter added
 
                         Param_Diff obj_P = new Param_Diff(Commit_2, Prev_Arr.get(0), Next_Arr.get(0));
@@ -191,7 +217,7 @@ public class Parser {
         String S;
         try {
             
-            fw = new FileWriter("WriteTest.csv");
+            fw = new FileWriter("WriteTest2.csv");
             PrintWriter pw = new PrintWriter(fw);
             pw.print(FILE_HEADER);
             pw.println();
