@@ -3,7 +3,6 @@ package Tas_tas.git_mining;
 import java.io.BufferedReader;
 import org.apache.commons.io.FileUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,8 +25,6 @@ import java.io.FileOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 //import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -83,11 +80,16 @@ public class App {
 
 	private static boolean isEndOfStream = false;
 
-    public static void cloneRepository() throws IOException {
+    public static File cloneRepository() throws IOException {
         // prepare a new folder for the cloned repository
-        File localPath = new File("C:\\Users\\user\\eclipse-workspace\\git_mining2\\New.git");
+    	System.out.println(System.getProperty("user.dir"));
+    	String LocalPath = System.getProperty("user.dir")+"\\"+REMOTE_URL.substring(REMOTE_URL.lastIndexOf("/")+1,REMOTE_URL.lastIndexOf(".git"));
+    	System.out.println(LocalPath);
+        
+        File localPath = new File(LocalPath);
+        System.out.println(localPath.toString());
         //
-        //FileUtils.deleteDirectory(new File(destination))
+        if(localPath.exists())FileUtils.deleteDirectory(localPath);
        /*
         if(!localPath.delete()) {
             throw new IOException("Could not delete temporary file " + localPath);
@@ -97,9 +99,11 @@ public class App {
         System.out.println("Cloning from " + REMOTE_URL + " to " + localPath);
         try (Git result = Git.cloneRepository()
                 .setURI(REMOTE_URL)
+                .setDirectory(localPath)
                 .call()) {
 	        // Note: the call() returns an opened repository already which needs to be closed to avoid file handle leaks!
 	        System.out.println("Having repository: " + result.getRepository().getDirectory());
+	        return result.getRepository().getDirectory();
         } catch (InvalidRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -110,11 +114,12 @@ public class App {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        return null;
     }
 
-    public static Repository openRepository() throws IOException {
+    public static Repository openRepository(File F) throws IOException {
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        File F=new File("C:\\Users\\user\\AppData\\Local\\Temp\\TestGitRepository9027401615234628887\\.git");
+        //File F=new File();
         return builder.setGitDir(F)
                 .readEnvironment() // scan environment GIT_* variables
                 .findGitDir() // scan up the file system tree
@@ -122,8 +127,8 @@ public class App {
     }
 
     public static void main(String[] args) throws IOException, GitAPIException {
-    	//cloneRepository();
-        try (Repository repository = openRepository()) {
+    	File F=cloneRepository();
+        try (Repository repository = openRepository(F)) {
             FileOutputStream FS=new FileOutputStream("C:\\Users\\user\\Documents\\testJgit22.txt");
             
             try (Git git = new Git(repository)) {

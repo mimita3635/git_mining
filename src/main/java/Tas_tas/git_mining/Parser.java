@@ -58,7 +58,7 @@ public class Parser {
 
         //Run Till End of file
         while (!(S = retLine()).equals("END Of FILE")) {
-            System.out.println(S);
+            //System.out.println(S);
             //Start of a new Diff, save commit numbers
             if (S.startsWith("Diff")) {
                 String[] tokens = S.split(" ");
