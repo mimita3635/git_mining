@@ -29,20 +29,8 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-
-import io.reflectoring.diffparser.api.DiffParser;
-import io.reflectoring.diffparser.api.UnifiedDiffParser;
-import io.reflectoring.diffparser.api.model.Diff;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 //import com.googlecode.javaewah.IteratorUtil;
 
 /**
@@ -50,83 +38,23 @@ import java.util.regex.Pattern;
  */
 public class App {
 
-	private static  String REMOTE_URL = "https://github.com/gingerswede/doris.git";
-
-	public static BufferedReader reader;
-	private static LinkedList<String> lineQueue = new LinkedList<>();
-
-	private static int lineNumber = 0;
-
-	private static List<Pattern> ignorePatterns = new ArrayList<>();
-
-	private static boolean isEndOfStream = false;
-
-	public static File cloneRepository() throws IOException {
-		// prepare a new folder for the cloned repository
-		System.out.println(System.getProperty("user.dir"));
-		String LocalPath = System.getProperty("user.dir") + "\\"
-				+ REMOTE_URL.substring(REMOTE_URL.lastIndexOf("/") + 1, REMOTE_URL.lastIndexOf(".git"));
-		System.out.println(LocalPath);
-
-		File localPath = new File(LocalPath);
-		System.out.println(localPath.toString());
-		//
-		if (localPath.exists())
-			FileUtils.deleteDirectory(localPath);
-		/*
-		 * if(!localPath.delete()) { throw new
-		 * IOException("Could not delete temporary file " + localPath); }
-		 */
-
-		// then clone
-		System.out.println("Cloning from " + REMOTE_URL + " to " + localPath);
-		
-		try (Git result = Git.cloneRepository().setURI(REMOTE_URL).setDirectory(localPath).call()) {
-			// Note: the call() returns an opened repository already which needs to be
-			// closed to avoid file handle leaks!
-			File F=result.getRepository().getDirectory();
-			System.out.println("Having repository: " + F);
-			//result.close();
-			return F;
-		} catch (InvalidRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransportException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (GitAPIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		finally {
-			//result.close();
-		}
-		return null;
-	}
-
-	public static Repository openRepository(File F) throws IOException {
-		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		// File F=new File();
-		return builder.setGitDir(F).readEnvironment() // scan environment GIT_* variables
-				.findGitDir() // scan up the file system tree
-				.build();
-	}
+	private static String REMOTE_URL = "https://github.com/gingerswede/doris.git";
 
 	public static void main(String[] args) throws IOException, GitAPIException {
+		System.out.println("Please enter The Java GitHub code repository name in https://repo_name.git format");
 		
-		if(args.length<1) {
-			Scanner S=new Scanner(System.in);
-			System.out.println("Please enter The Java GitHub code repository name");
-			REMOTE_URL=S.nextLine().trim();
-		}
-		else {
-			REMOTE_URL=args[0];
-		}
-		System.out.println(REMOTE_URL);
-		File F = cloneRepository();
-		try (Repository repository = openRepository(F)) {
-			FileOutputStream FS = new FileOutputStream("C:\\Users\\user\\Documents\\testJgit22.txt");
-			// git;
+		Scanner S = new Scanner(System.in);
+
+		REMOTE_URL = S.nextLine().trim(); //Take as input repo_name
+
+		System.out.println("Given URL\t"+REMOTE_URL);
+		
+		File F = Repository_Handler.cloneRepository(REMOTE_URL);
+		
+		try (Repository repository = Repository_Handler.openRepository(F)) {
+		
+			FileOutputStream FS = new FileOutputStream("Logfile.txt");
+			
 			try (Git git = new Git(repository)) {
 
 				// compare older commit with the newer one, showing an addition
@@ -144,14 +72,13 @@ public class App {
 					Ra = Rb;
 
 				}
-				
-			}
-			finally {
-					
+
+			} finally {
+
 				FS.close();
-				//repository.close();
+				// repository.close();
 			}
-			InputStream in = new FileInputStream("C:\\Users\\user\\Documents\\testJgit22.txt");
+			InputStream in = new FileInputStream("Logfile.txt");
 			// Reader unbufferedReader = new InputStreamReader(in);
 			// reader = new BufferedReader(new InputStreamReader(in));
 			Parser P = new Parser(in);
@@ -172,61 +99,11 @@ public class App {
 			 * RevCommit commit = walk.next(); while( commit != null ) { // use commit
 			 * commit = walk.next(); } walk.close();
 			 */
-			
+
 			in.close();
-			//repository.close();
-			
+			// repository.close();
 
 		}
-	}
-
-	public void addIgnorePattern(String ignorePattern) {
-		this.ignorePatterns.add(Pattern.compile(ignorePattern));
-	}
-
-	private static void listDiff(Repository repository, Git git, String oldCommit, String newCommit)
-			throws GitAPIException, IOException {
-		// git.diff().setOutputStream(System.out).call();
-		// git.diff()
-		/*
-		 * final List<DiffEntry> diffs = git.diff()
-		 * .setOldTree(prepareTreeParser(repository, oldCommit))
-		 * .setNewTree(prepareTreeParser(repository, newCommit)) .setContextLines(5)
-		 * .call(); System.out.println("Found: " + diffs.size() + " differences"); for
-		 * (DiffEntry diff : diffs) {
-		 * 
-		 * }
-		 */
-		try {
-
-			FileOutputStream FS = new FileOutputStream("C:\\Users\\user\\Documents\\testJgit.txt");
-			DiffFormatter df = new DiffFormatter(FS);
-
-			df.setRepository(git.getRepository());
-			df.setContext(0);
-			List<DiffEntry> entries = df.scan(prepareTreeParser(repository, oldCommit),
-					prepareTreeParser(repository, newCommit));
-			df.format(entries);
-			df.flush();
-			df.close();
-
-		} catch (Exception E) {
-			E.printStackTrace();
-		}
-		/*
-		 * for( DiffEntry entry : entries ) { System.out.println( "def"+entry+"abc" ); }
-		 */
-
-		// df.format(diffs);
-		/*
-		 * List<DiffEntry> entries = df.scan( oldTreeIter, newTreeIter );
-		 * 
-		 * for( DiffEntry entry : entries ) { System.out.println( entry ); }
-		 * 
-		 * for (DiffEntry diff : diffs) { System.out.println("Diff: " +
-		 * diff.getChangeType() + ": " + (diff.getOldPath().equals(diff.getNewPath()) ?
-		 * diff.getNewPath() : diff.getOldPath() + " -> " + diff.getNewPath())); }
-		 */
 	}
 
 	private static void listDiff(Repository repository, Git git, RevCommit oldCommit, RevCommit newCommit,

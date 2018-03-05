@@ -193,6 +193,9 @@ public class Parser {
 		}
 	}
 
+	
+	//Takes line input from file
+	
 	public String retLine() {
 		try {
 			lineQueue.pollFirst();
