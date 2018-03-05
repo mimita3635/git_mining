@@ -114,7 +114,7 @@ public class App {
 
     public static Repository openRepository() throws IOException {
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        File F=new File("C:\\Users\\user\\Documents\\GitHub\\Project_Mining//.git");
+        File F=new File("C:\\Users\\user\\AppData\\Local\\Temp\\TestGitRepository9027401615234628887\\.git");
         return builder.setGitDir(F)
                 .readEnvironment() // scan environment GIT_* variables
                 .findGitDir() // scan up the file system tree
@@ -122,7 +122,7 @@ public class App {
     }
 
     public static void main(String[] args) throws IOException, GitAPIException {
-    	cloneRepository();
+    	//cloneRepository();
         try (Repository repository = openRepository()) {
             FileOutputStream FS=new FileOutputStream("C:\\Users\\user\\Documents\\testJgit22.txt");
             
