@@ -158,7 +158,7 @@ public class Parser {
 			
 			//Open file writer
 
-			fw = new FileWriter("WriteTest.csv");
+			fw = new FileWriter("Method_Diff.csv");
 			
 			PrintWriter pw = new PrintWriter(fw);
 			pw.print(FILE_HEADER);
@@ -182,6 +182,9 @@ public class Parser {
 			// Close the File Writer
 			
 			fw.close();
+			
+			System.out.println("Finished!\nPlease check Method_Diff.csv file");
+			
 		} catch (IOException ex) {
 			Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
