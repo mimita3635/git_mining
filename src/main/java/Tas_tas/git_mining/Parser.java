@@ -27,7 +27,7 @@ public class Parser {
 
 	public List<Param_Diff> PD = new ArrayList<>(); // ArrayList to keep track of added parameter in methods
 
-	private final String FILE_HEADER = "commit,old,new"; // Used for CSV
+	private final String FILE_HEADER = "commit,old_sign,new_sign"; // Used for CSV
 
 	Parser(InputStream In) {
 

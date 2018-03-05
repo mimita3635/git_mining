@@ -28,7 +28,7 @@ public class App {
 
 	public static void main(String[] args) throws IOException, GitAPIException {
 		
-		System.out.println("Please enter The Java GitHub code repository name in https format");
+		System.out.println("Please enter The Java GitHub code repository name in https//reponame.git format");
 
 		Scanner S = new Scanner(System.in);
 
