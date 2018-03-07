@@ -75,6 +75,10 @@ The following tools and sites has hbeen used or taken help from for developing t
 #### Further Improvement
 
 Use of Abstract Syntax Trees like [JavaParser] in stead of pattern matching with regular expression.
+
+####Links
+
+[//]:
    [JGit]: <http://www.eclipse.org/jgit/>
    [cookbook]: <https://github.com/centic9/jgit-cookbook>
    [diffparser]: <https://github.com/thombergs/diffparser>
