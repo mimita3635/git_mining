@@ -8,11 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.Iterator;
+
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -21,44 +23,43 @@ import org.eclipse.jgit.revwalk.RevCommit;
  */
 public class App {
 
-	// URL for accessing remote repository
+	//URL for accessing remote repository
 	private static String REMOTE_URL = "";
-
-	private static String m_uriRegExp = "^(http(s?))://.*\\.git";
+	
+	private static String m_uriRegExp = "^(http(s?))://.*\\.git";;
+	
 
 	public static void main(String[] args) throws IOException, GitAPIException {
 		
-		System.out.println("Please enter The Java GitHub code repository name in https//reponame.git format");
-
+		System.out.println("Please enter The Java GitHub code repository name in https://repo_name.git format");
+		
 		Scanner S = new Scanner(System.in);
 
 		REMOTE_URL = S.nextLine().trim(); // Take as input repo_name
-		
-		
-		//Check for error
-		while(!Pattern.compile(m_uriRegExp).matcher(REMOTE_URL).matches()) {
-			
-			System.out.println("Please Enter valid URI");
 
+		// Check for error
+		while (!Pattern.compile(m_uriRegExp).matcher(REMOTE_URL).matches()) {
+
+			System.out.println("Please Enter valid URI");
 
 			REMOTE_URL = S.nextLine().trim(); // Take as input repo_name
 
 		}
-
-		System.out.println("Given URL\t" + REMOTE_URL);
-
+		S.close();
+		System.out.println("Given URL\t"+REMOTE_URL);
+		
 		File F = Repository_Handler.cloneRepository(REMOTE_URL);
-
+		
 		try (Repository repository = Repository_Handler.openRepository(F)) {
-
-			// Write log to file
+		
+			//Write log to file
 			FileOutputStream FS = new FileOutputStream("Logfile.txt");
-
+			
 			try (Git git = new Git(repository)) {
 
 				// compare older commit with the newer one
-
-				Iterable<RevCommit> commits = git.log().all().call(); // git log
+		
+				Iterable<RevCommit> commits = git.log().all().call();  //git log
 				Iterator<RevCommit> it = commits.iterator();
 
 				RevCommit Ra = it.next();
@@ -73,23 +74,23 @@ public class App {
 				}
 
 			} finally {
-
+				
 				FS.close();
 				// repository.close();
 			}
+		
 			InputStream in = new FileInputStream("Logfile.txt");
 
 			Parser P = new Parser(in);
-
+			
 			P.get_diffs();
 
 			in.close();
+			
 
 		}
 	}
 
-	public static Boolean validateUri(String uri) {
-		return Pattern.compile(m_uriRegExp).matcher(uri).matches();
-	}
 
+	
 }

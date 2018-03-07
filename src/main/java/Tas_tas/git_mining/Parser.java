@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -18,10 +20,6 @@ import java.util.regex.Pattern;
 public class Parser {
 
 	private BufferedReader reader;
-
-	private LinkedList<String> lineQueue = new LinkedList<>();
-
-	private List<Pattern> MatchingPatterns = new ArrayList<>();
 
 	private Pattern Param_Pattern, Method_Pattern, Method_Name_Pattern; // Patterns to be matched
 
@@ -44,10 +42,14 @@ public class Parser {
 		reader = new BufferedReader(new InputStreamReader(In));// Initializing input stream reader
 
 	}
-
+	
 	public void get_diffs() {
-
+			
+			
 		String S; // For processing each line of log file
+
+		String filename1 = "";
+		String filename2 = "";
 
 		String Commit = ""; // Keep track of commit number
 
@@ -57,7 +59,13 @@ public class Parser {
 
 		// Run Till End of file
 
-		while (!(S = retLine()).equals("END Of FILE")) {
+		Scanner input = new Scanner(reader);
+
+		while (input.hasNext()) {
+		
+			S = input.nextLine();
+			
+		
 
 			// Start of a new Diff, save commit number
 
@@ -66,11 +74,14 @@ public class Parser {
 				String[] tokens = S.split(" ");
 
 				Commit = tokens[3].replace("diff", "");
+				Commit = tokens[3].replace("Diff", "");
 
 				// Clear previous method Info
 
 				Prev_Arr.clear();
 				Next_Arr.clear();
+				filename1 = "";
+				filename2 = "";
 			}
 
 			// diff within same commit
@@ -81,6 +92,8 @@ public class Parser {
 
 				Prev_Arr.clear();
 				Next_Arr.clear();
+				filename1 = "";
+				filename2 = "";
 			}
 
 			else if (S.startsWith("index")) {
@@ -94,19 +107,27 @@ public class Parser {
 				// Clear previous method Info
 
 				Prev_Arr.clear();
-				
+
 				if (Next_Arr != null) {
 					Next_Arr.clear();
 				}
 			}
 
 			else if (S.startsWith("---")) {
+				if (S.contains(".java")) {
+					filename1 = S.substring(S.lastIndexOf("/") + 1);
+					// System.out.println(filename1);
+				}
 
 				continue;
 
 			}
 
 			else if (S.startsWith("+++")) {
+				if (S.contains(".java")) {
+					filename2 = S.substring(S.lastIndexOf("/") + 1);
+					// System.out.println(filename1);
+				}
 
 				continue;
 
@@ -115,20 +136,26 @@ public class Parser {
 			else if (S.startsWith("-")) {
 
 				// CHeck if there is any method name in changed line
-
-				Prev_Arr = matchesPattern(S);
+				if (!filename1.equals("") && !filename2.equals("")) {
+					S=S.substring(1);
+					S=S.trim();
+					Prev_Arr = matchesPattern(S);
+				}
 
 			}
 
 			else if (S.startsWith("+")) {
 				// CHeck if there is any method name in changed line
+				if (!filename1.equals("") && !filename2.equals("")) {
+					S=S.substring(1);
+					S=S.trim();
+					Next_Arr = matchesPattern(S);
+				}
 
-				Next_Arr = matchesPattern(S);
+				if (!(Prev_Arr.isEmpty()) && !(Next_Arr.isEmpty()) && (Prev_Arr.size()==5 && Next_Arr.size()==5)) {
 
-				if (!(Prev_Arr.isEmpty()) && !(Next_Arr.isEmpty())) {
-					
-					//create the parameter difference list
-					
+					// create the parameter difference list
+
 					create_param_diff(Commit, Prev_Arr, Next_Arr);
 
 					// Contains patterns
@@ -136,55 +163,52 @@ public class Parser {
 					// Compare if they have same name
 				}
 			}
-
 		}
-		
-		//Write param_difffs to csv
+		input.close();
+
+		// Write param_difffs to csv
 
 		WriteCSV();
-		
+
 	}
 
-	
 	void WriteCSV() {
-		
+
 		FileWriter fw = null;
-		
+
 		System.out.println("Writing to csv");
-		
-		String S;
-		
+
 		try {
-			
-			//Open file writer
+
+			// Open file writer
 
 			fw = new FileWriter("Method_Diff.csv");
-			
+
 			PrintWriter pw = new PrintWriter(fw);
 			pw.print(FILE_HEADER);
 			pw.println();
-			
-			//Write the param_diffs to csv
+
+			// Write the param_diffs to csv
 
 			for (Param_Diff P : PD) {
-			
+
 				String recordAsCsv = P.toCsvRow();
-			
+
 				pw.println(recordAsCsv);
 			}
-			
+
 			pw.flush();
-			
+
 			// Close the Print Writer
-			
+
 			pw.close();
-			
+
 			// Close the File Writer
-			
+
 			fw.close();
-			
+
 			System.out.println("Finished!\nPlease check Method_Diff.csv file");
-			
+
 		} catch (IOException ex) {
 			Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
@@ -196,90 +220,73 @@ public class Parser {
 		}
 	}
 
-	
-	//Takes line input from file
-	
-	public String retLine() {
-		try {
-			lineQueue.pollFirst();
-			if (lineQueue.isEmpty()) {
-				String nextLine = getNextLine();
-				if (nextLine != null) {
-					lineQueue.addLast(nextLine);
-				}
-				return nextLine;
-			} else {
-				return lineQueue.element();
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+	// Takes line input from file
 
-	private String getNextLine() throws IOException {
-		String nextLine = reader.readLine();
 
-		if (nextLine != null) {
-			return nextLine;
-		} else {
-			return "END Of FILE";
-		}
-	}
 
-	
 	private ArrayList<String> matchesPattern(String line) {
+		// System.out.println("Dash");
 		ArrayList<String> S_Array = new ArrayList<>();
 		if (line == null) {
 			return S_Array;
 		}
 
 		else {
+			try {
 
-			Matcher matcher = Method_Pattern.matcher(line);
+				Matcher matcher = RegexpHandler.createMatcherWithTimeout(line, Method_Pattern, 5000);
 
-			// Check if the changed line represents a method
+				// Check if the changed line represents a method
 
-			if (matcher.find()) {
+				if (matcher.find()) {
 
-				for (int i = 0; i < matcher.groupCount(); i++) {
+					for (int i = 0; i < matcher.groupCount(); i++) {
 
-					S_Array.add(matcher.group(i)); // Add pattern matched groups to method
-
-				}
-
-				// Extract Parameters
-
-				Matcher matcher2 = Param_Pattern.matcher(line);
-
-				if (matcher2.find()) {
-
-					for (int i = 0; i < matcher2.groupCount(); i++) {
-						S_Array.add(matcher2.group(i)); // Add pattern matched groups to method
+						S_Array.add(matcher.group(i)); // Add pattern matched groups to method
 
 					}
 
-				}
+					// Extract Parameters
 
-				// Extract Method Name
+					Matcher matcher2 =  RegexpHandler.createMatcherWithTimeout(line, Param_Pattern, 5000);
 
-				Matcher matcher3 = Method_Name_Pattern.matcher(line);
-				if (matcher3.find()) {
+					if (matcher2.find()) {
 
-					for (int i = 0; i < matcher3.groupCount(); i++) {
-						S_Array.add(matcher3.group(i)); // Add pattern matched groups to method
+						for (int i = 0; i < matcher2.groupCount(); i++) {
+							S_Array.add(matcher2.group(i)); // Add pattern matched groups to method
+
+						}
 
 					}
 
+					// Extract Method Name
+
+					Matcher matcher3 =  RegexpHandler.createMatcherWithTimeout(line, Method_Name_Pattern, 5000);
+					if (matcher3.find()) {
+
+						for (int i = 0; i < matcher3.groupCount(); i++) {
+							S_Array.add(matcher3.group(i)); // Add pattern matched groups to method
+
+						}
+
+					}
+					return S_Array;
 				}
+
 				return S_Array;
 			}
 
-			return S_Array;
-		}
+			catch (RuntimeException RE) {
+				System.out.println(RE);
+				S_Array.clear();
+				return S_Array;
+			}
 
+		}
+		//return S_Array;
 	}
-	
-	private void create_param_diff(String Commit,ArrayList<String> Prev_Arr, ArrayList<String> Next_Arr) {
+
+	private void create_param_diff(String Commit, ArrayList<String> Prev_Arr, ArrayList<String> Next_Arr) {
 		
 		if (Prev_Arr.get(4).equals(Next_Arr.get(4))) {
 
@@ -291,8 +298,8 @@ public class Parser {
 			// Create a list of the parameters
 
 			ArrayList<String> Tokenize = new ArrayList<>(Arrays.asList(Prev_Token.split(",")));
-			
-			//For trimming and deleting empty strings
+
+			// For trimming and deleting empty strings
 
 			for (int i = 0; i < Tokenize.size(); i++) {
 				String Temp = Tokenize.get(i);
@@ -308,9 +315,9 @@ public class Parser {
 
 			String Next_Token = Next_Arr.get(2).substring(Next_Arr.get(2).indexOf("(") + 1,
 					Next_Arr.get(2).indexOf(")"));
-			
+
 			ArrayList<String> Tokenize2 = new ArrayList<>(Arrays.asList(Next_Token.split(",")));
-			
+
 			for (int i = 0; i < Tokenize2.size(); i++) {
 				String Temp = Tokenize2.get(i);
 				Temp = Temp.trim();
