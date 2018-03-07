@@ -1,2 +1,42 @@
 commit,old_sign,new_sign
-19536fe5765ee79489265927a97cb0e19bb93e70,"static void createCommit(Repository repository, Git git, String fileName)","static void createCommit(Repository repository, Git git, String fileName, String content)"
+ec28b1250d24510ed5c398ed8bddfc48e1262e62diff,  public ElfBeast(),  public ElfBeast(String helpType)
+ec28b1250d24510ed5c398ed8bddfc48e1262e62diff,  public ElfMage(),  public ElfMage(String helpType)
+ec28b1250d24510ed5c398ed8bddfc48e1262e62diff,  public ElfWarlord(),  public ElfWarlord(String helpType)
+ec28b1250d24510ed5c398ed8bddfc48e1262e62diff,  public OrcBeast(),  public OrcBeast(String weapon)
+ec28b1250d24510ed5c398ed8bddfc48e1262e62diff,  public OrcMage(),  public OrcMage(String weapon)
+ec28b1250d24510ed5c398ed8bddfc48e1262e62diff,  public OrcWarlord(),  public OrcWarlord(String weapon)
+2dcf63c6465da0c0209627d10474a46615f836dddiff,public void testDisplay(),"public void testDisplay(String request, String displayMessage)"
+2dcf63c6465da0c0209627d10474a46615f836dddiff,public void testDisplay(),"public void testDisplay(Command command, String displayMessage)"
+2dcf63c6465da0c0209627d10474a46615f836dddiff,public void testDisplay(),"public void testDisplay(View view, String displayMessage)"
+2dcf63c6465da0c0209627d10474a46615f836dddiff,public void testIterator(),public void testIterator(Item expectedItem)
+2dcf63c6465da0c0209627d10474a46615f836dddiff,public void testGetItems(),public void testGetItems(Item expectedItem)
+2dcf63c6465da0c0209627d10474a46615f836dddiff,public void testObserver(),"public void testObserver(WeatherType weather, String response)"
+2dcf63c6465da0c0209627d10474a46615f836dddiff,public void testObserver(),"public void testObserver(WeatherType weather, String response)"
+9f797b3009e107835717f1afb6cce054ae457dc9diff,  public ElfBeast(),  public ElfBeast(String helpType)
+9f797b3009e107835717f1afb6cce054ae457dc9diff,  public ElfMage(),  public ElfMage(String helpType)
+9f797b3009e107835717f1afb6cce054ae457dc9diff,  public ElfWarlord(),  public ElfWarlord(String helpType)
+9f797b3009e107835717f1afb6cce054ae457dc9diff,  public OrcBeast(),  public OrcBeast(String weapon)
+9f797b3009e107835717f1afb6cce054ae457dc9diff,  public OrcMage(),  public OrcMage(String weapon)
+9f797b3009e107835717f1afb6cce054ae457dc9diff,  public OrcWarlord(),  public OrcWarlord(String weapon)
+286f187df47f66ced7574976b908e3d4f4782523diff,"  public Reader(String name, Lock readLock)","  public Reader(String name, Lock readLock, long readingTime)"
+d0ad0f7ea93c18f9a9ea79758d6dc91372a1517cdiff,"  public VideoResource(Map<Integer, Video> videos)","  public VideoResource(FieldJsonMapper fieldJsonMapper, Map<Integer, Video> videos)"
+00bdfd6bd82d69c3168dcd2dc3356958af3f2c37diff,private void mutedClose(Connection connection),"private void mutedClose(Connection connection, PreparedStatement statement, ResultSet resultSet)"
+00bdfd6bd82d69c3168dcd2dc3356958af3f2c37diff,"  public Reader(String name, Lock readLock)","  public Reader(String name, Lock readLock, long readingTime)"
+f07d3bd4d5613c8f56cd0422c00367ce285fef19diff,private void mutedClose(Connection connection),"private void mutedClose(Connection connection, PreparedStatement statement, ResultSet resultSet)"
+f07d3bd4d5613c8f56cd0422c00367ce285fef19diff,"  public Reader(String name, Lock readLock)","  public Reader(String name, Lock readLock, long readingTime)"
+c6354c48bb0f62c3030d63a824812173263adac9diff,"  public Reader(String name, Lock readLock)","  public Reader(String name, Lock readLock, long readingTime)"
+08cc50e875f049d227610b8c7866249f3aa554f4,private void mutedClose(Connection connection),"private void mutedClose(Connection connection, PreparedStatement statement, ResultSet resultSet)"
+08cc50e875f049d227610b8c7866249f3aa554f4,"  public Reader(String name, Lock readLock)","  public Reader(String name, Lock readLock, long readingTime)"
+2a98a1399ec516cb3904d727384356f912e7f7e7diff,private void mutedClose(Connection connection),"private void mutedClose(Connection connection, PreparedStatement statement, ResultSet resultSet)"
+73934e25e5bfbca572d8b3f275763f8e684d8c60diff,static List<Object[]> prepareParameters(final IntBinaryOperator resultCalc),"static List<Object[]> prepareParameters(final BiFunction<Integer, Integer, Integer> resultCalc)"
+9a90f2de1f50557e584d3a0ced4d134c8c702090diff,"  private LotteryTicket(PlayerDetails details, LotteryNumbers numbers)","  private LotteryTicket(LotteryTicketId id, PlayerDetails details, LotteryNumbers numbers)"
+fce30db80373275755ced419969f97076bc084d1diff,"  private LotteryTicket(PlayerDetails details, LotteryNumbers numbers)","  private LotteryTicket(LotteryTicketId id, PlayerDetails details, LotteryNumbers numbers)"
+11c0654103c3622474e5ae2f78a83701dbef8883diff,  void notifyPrize(PlayerDetails details),"  void notifyPrize(PlayerDetails details, int prizeAmount)"
+f620123ceea1bc2847d1b2709c3d4fcf03a624bfdiff,"  boolean transferFunds(int amount, String receiverBankAccountNumber)","  boolean transferFunds(int amount, String sourceBackAccount, String destinationBankAccount)"
+d2f620a5e62f187823629414286f141e45b91c98diff,  LotteryTicketCheckResult checkTicketForPrize(LotteryTicket ticket),"  LotteryTicketCheckResult checkTicketForPrize(LotteryTicketId id, LotteryNumbers winningNumbers)"
+9544dd321a4e86aad99f4ee12a86cde12fa23d81diff,  public FilterChain(),  public FilterChain(Target target)
+898f3a428c508418e1fc2ca27c793bd395e7a7e0diff,"  public Person(String name, String surname)","  public Person(String name, String surname, int age)"
+9e857d7dd6e6f0653953c4da787a72c2cfd0c0bediff,"  public Person(String name, String surname)","  public Person(String name, String surname, int age)"
+9d4fff6029a67efeeb1aeaad980fc2c5f8a9fcef,"  public Person(String name, String surname)","  public Person(String name, String surname, int age)"
+99adb5b0cfa9f54962eb82c536a3b714e4a377e7diff,public void handle(),public void handle(SelectableChannel channel)
+99adb5b0cfa9f54962eb82c536a3b714e4a377e7diff,public void handle(),public void handle(SelectableChannel channel)
